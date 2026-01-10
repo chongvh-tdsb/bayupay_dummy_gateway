@@ -10,6 +10,7 @@ function generateTransaksiKod($data){
     ]));
 }
 
+// Use POST first, fallback to GET
 $d = $_POST ?: $_GET;
 
 $rn = $d['rn'] ?? '';
@@ -18,18 +19,17 @@ $email = $d['email'] ?? '';
 $tel_no = $d['tel_no'] ?? '';
 $amount = $d['amount'] ?? 0;
 $bank = $d['bank'] ?? '';
-$fpx_type = $d['fpx_type'] ?? '';
 $transaction_status = $d['transaction_status'] ?? 'PENDING';
 $bounce = $d['bounce'] ?? '/';
 
 $fpxRef = 'BPX'.date('YmdHis');
 $transaksiKod = generateTransaksiKod($d);
 
-// Insert transaction
+// Insert transaction without fpx_type
 $stmt = $db->prepare("
 INSERT INTO transactions 
-(seller_ref,fpx_ref,name,email,phone,amount,status,transaksi_kod,bank,fpx_type)
-VALUES (?,?,?,?,?,?,?,?,?,?,?)
+(seller_ref,fpx_ref,name,email,phone,amount,status,transaksi_kod,bank)
+VALUES (?,?,?,?,?,?,?,?,?)
 ");
 $stmt->execute([
     $rn,
@@ -40,8 +40,7 @@ $stmt->execute([
     $amount,
     $transaction_status,
     $transaksiKod,
-    $bank,
-    $fpx_type
+    $bank
 ]);
 
 ?>
@@ -63,7 +62,7 @@ button{width:100%;padding:12px;margin-top:20px}
 <p>Transaction Ref: <?= htmlspecialchars($fpxRef) ?></p>
 <p>Name: <?= htmlspecialchars($co_name) ?></p>
 <p>Amount: RM <?= htmlspecialchars($amount) ?></p>
-<p>Bank: <?= htmlspecialchars($bank) ?> (<?= htmlspecialchars($fpx_type) ?>)</p>
+<p>Bank: <?= htmlspecialchars($bank) ?></p>
 <p>Status: <span class="<?= strtolower(str_replace(' ','-',$transaction_status)) ?>"><?= htmlspecialchars($transaction_status) ?></span></p>
 <form method="get" action="<?= htmlspecialchars($bounce) ?>">
 <input type="hidden" name="transaksi_kod" value="<?= htmlspecialchars($transaksiKod) ?>">
