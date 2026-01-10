@@ -1,0 +1,11 @@
+version: "3.9"
+
+services:
+  bayupay-gateway:
+    image: php:8.2-apache
+    container_name: bayupay_dummy_gateway
+    ports:
+      - "8123:80"   # <-- host port 8123 mapped to container port 80
+    volumes:
+      - ./bayupay_dummy_gateway:/var/www/html
+    restart: unless-stopped
