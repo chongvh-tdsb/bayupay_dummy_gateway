@@ -4,8 +4,24 @@ function generateTransaksiKod($data){return base64_encode(json_encode(['order'=>
 $d=$_POST;
 $fpxRef='BPX'.date('YmdHis');
 $transaksiKod=generateTransaksiKod($d);
-$stmt=$db->prepare("INSERT INTO transactions (seller_ref,fpx_ref,name,email,phone,amount,status,transaksi_kod,bank,fpx_type) VALUES (?,?,?,?,?,?,?,?,?,?,?)");
-$stmt->execute([$d['rn'],$fpxRef,$d['co_name'],$d['email'],$d['tel_no'],$d['amount'],$d['transaction_status'],$transaksiKod,$d['bank'],$d['fpx_type']]);
+$stmt = $db->prepare("
+INSERT INTO transactions 
+(seller_ref, fpx_ref, name, email, phone, amount, status, transaksi_kod, bank, fpx_type)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+");
+$stmt->execute([
+    $seller_ref,
+    $fpx_ref,
+    $co_name,
+    $email,
+    $tel_no,
+    $amount,
+    $status,
+    $transaksi_kod,
+    $bank,
+    $fpx_type,
+]);
+
 ?>
 <!DOCTYPE html>
 <html>
