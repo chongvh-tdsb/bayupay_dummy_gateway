@@ -43,6 +43,7 @@ $stmt->execute([
     $bank,
     $fpx_type
 ]);
+
 ?>
 <!DOCTYPE html>
 <html>
