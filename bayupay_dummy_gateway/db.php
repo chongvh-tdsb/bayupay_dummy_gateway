@@ -1,5 +1,5 @@
 <?php
-$host = 'mysql';       // Docker Compose service name
+$host = 'mysql';
 $dbname = 'bayupay_db';
 $user = 'bayupay_user';
 $pass = 'bayupay_pass';
@@ -8,9 +8,12 @@ try {
     $db = new PDO("mysql:host=$host;port=3306;dbname=$dbname;charset=utf8mb4", $user, $pass);
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Create table if not exists with sid and itn
+    // Drop table if exists (only if you are ok with clearing old data)
+    $db->exec("DROP TABLE IF EXISTS transactions");
+
+    // Recreate table with sid & itn
     $db->exec("
-    CREATE TABLE IF NOT EXISTS transactions (
+    CREATE TABLE transactions (
         id INT AUTO_INCREMENT PRIMARY KEY,
         seller_ref VARCHAR(255),
         fpx_ref VARCHAR(255),
@@ -26,6 +29,8 @@ try {
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
     ");
+
+    echo "Table created successfully with SID & ITN!";
 } catch (PDOException $e) {
     die("Database connection failed: " . $e->getMessage());
 }
