@@ -1,15 +1,14 @@
 <?php
-// Connect to MySQL
-$host = 'mysql';  // or 'mysql' if using Docker Compose service name
+$host = 'mysql';       // Docker Compose service name
 $dbname = 'bayupay_db';
 $user = 'bayupay_user';
 $pass = 'bayupay_pass';
 
 try {
-    $db = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $user, $pass);
+    $db = new PDO("mysql:host=$host;port=3306;dbname=$dbname;charset=utf8mb4", $user, $pass);
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Create transactions table with created_at column
+    // Create table if not exists
     $db->exec("
     CREATE TABLE IF NOT EXISTS transactions (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -25,8 +24,6 @@ try {
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
     ");
-
-    echo "Table created successfully!";
 } catch (PDOException $e) {
-    echo "Error: " . $e->getMessage();
+    die("Database connection failed: " . $e->getMessage());
 }
