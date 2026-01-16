@@ -10,15 +10,11 @@ if (!isset($d['rn'], $d['amount'], $d['bank'], $d['transaction_status'])) {
     exit;
 }
 
-// Function to generate kod_transaksi
 function generateKodTransaksi($data) {
-    return base64_encode(json_encode([
-        'order' => $data['rn'] ?? '',
-        'amount' => $data['amount'] ?? 0,
-        'status' => $data['transaction_status'] ?? 'PENDING',
-        'time' => time()
-    ]));
+    $str = ($data['rn'] ?? '') . '|' . ($data['amount'] ?? 0) . '|' . ($data['transaction_status'] ?? 'PENDING') . '|' . time();
+    return substr(hash('sha256', $str), 0, 50);
 }
+
 
 $fpxRef = 'BPX' . date('YmdHis');
 $kodTransaksi = generateKodTransaksi($d);

@@ -20,7 +20,7 @@ try {
         phone VARCHAR(50),
         amount DECIMAL(10,2),
         status VARCHAR(50),
-        kod_transaksi VARCHAR(50),
+        kod_transaksi VARCHAR(255),
         bank VARCHAR(50),
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
