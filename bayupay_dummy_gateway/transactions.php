@@ -38,6 +38,9 @@ function statusClass($status) {
     <tr>
         <th>ID</th>
         <th>Order</th>
+        <th>Kod Transaksi</th>
+        <th>SID</th>
+        <th>ITN</th>
         <th>Amount (RM)</th>
         <th>Status</th>
         <th>Bank</th>
@@ -47,6 +50,9 @@ function statusClass($status) {
     <tr>
         <td><?= htmlspecialchars($r['id']) ?></td>
         <td><?= htmlspecialchars($r['seller_ref']) ?></td>
+        <td><?= htmlspecialchars($r['kod_transaksi']) ?></td>
+        <td><?= htmlspecialchars($r['sid']) ?></td>
+        <td><?= htmlspecialchars($r['itn']) ?></td>
         <td><?= htmlspecialchars($r['amount']) ?></td>
         <td class="<?= statusClass($r['status']) ?>"><?= htmlspecialchars($r['status']) ?></td>
         <td><?= htmlspecialchars($r['bank']) ?></td>

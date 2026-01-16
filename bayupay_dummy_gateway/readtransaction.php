@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') exit;
 // Bearer token
 $headers = getallheaders();
 $auth = $headers['Authorization'] ?? '';
-if (!preg_match('/Bearer\s(\S+)/', $auth, $m) || $m[1]!=='BAYUPAY_TEST_TOKEN_123') {
+if (!preg_match('/Bearer\s(\S+)/', $auth, $m) || $m[1]!=='test-api') {
     http_response_code(401); echo json_encode(['error'=>'Unauthorized']); exit;
 }
 
