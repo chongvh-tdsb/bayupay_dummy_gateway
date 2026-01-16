@@ -1,6 +1,6 @@
 <?php
 // Connect to MySQL
-$host = '127.0.0.1';  // or 'mysql' if using Docker Compose service name
+$host = 'mysql';  // or 'mysql' if using Docker Compose service name
 $dbname = 'bayupay_db';
 $user = 'bayupay_user';
 $pass = 'bayupay_pass';
