@@ -1,48 +1,45 @@
 <?php
 require 'db.php';
 
-function generateTransaksiKod($data){
+// Get POST data
+$d = $_POST;
+
+// Simple validation
+if (!isset($d['rn'], $d['amount'], $d['bank'], $d['transaction_status'])) {
+    echo "Invalid request.";
+    exit;
+}
+
+// Function to generate kod_transaksi
+function generateKodTransaksi($data) {
     return base64_encode(json_encode([
-        'order'=>$data['rn'] ?? '',
-        'amount'=>$data['amount'] ?? 0,
-        'status'=>$data['transaction_status'] ?? 'PENDING',
-        'time'=>time()
+        'order' => $data['rn'] ?? '',
+        'amount' => $data['amount'] ?? 0,
+        'status' => $data['transaction_status'] ?? 'PENDING',
+        'time' => time()
     ]));
 }
 
-// Use POST first, fallback to GET
-$d = $_POST ?: $_GET;
+$fpxRef = 'BPX' . date('YmdHis');
+$kodTransaksi = generateKodTransaksi($d);
 
-$rn = $d['rn'] ?? '';
-$co_name = $d['co_name'] ?? '';
-$email = $d['email'] ?? '';
-$tel_no = $d['tel_no'] ?? '';
-$amount = $d['amount'] ?? 0;
-$bank = $d['bank'] ?? '';
-$transaction_status = $d['transaction_status'] ?? 'PENDING';
-$bounce = $d['bounce'] ?? '/';
-
-$fpxRef = 'BPX'.date('YmdHis');
-$transaksiKod = generateTransaksiKod($d);
-
-// Insert transaction without fpx_type
+// Insert transaction into MySQL (created_at auto-filled)
 $stmt = $db->prepare("
 INSERT INTO transactions 
-(seller_ref,fpx_ref,name,email,phone,amount,status,transaksi_kod,bank)
+(seller_ref, fpx_ref, name, email, phone, amount, status, kod_transaksi, bank)
 VALUES (?,?,?,?,?,?,?,?,?)
 ");
 $stmt->execute([
-    $rn,
+    $d['rn'] ?? '',
     $fpxRef,
-    $co_name,
-    $email,
-    $tel_no,
-    $amount,
-    $transaction_status,
-    $transaksiKod,
-    $bank
+    $d['co_name'] ?? '',
+    $d['email'] ?? '',
+    $d['tel_no'] ?? '',
+    $d['amount'] ?? 0,
+    $d['transaction_status'] ?? 'PENDING',
+    $kodTransaksi,
+    $d['bank'] ?? ''
 ]);
-
 ?>
 <!DOCTYPE html>
 <html>
@@ -58,14 +55,15 @@ button{width:100%;padding:12px;margin-top:20px}
 <body>
 <div class="box">
 <h3>Payment Receipt</h3>
-<p>Order ID: <?= htmlspecialchars($rn) ?></p>
+<p>Order ID: <?= htmlspecialchars($d['rn']) ?></p>
 <p>Transaction Ref: <?= htmlspecialchars($fpxRef) ?></p>
-<p>Name: <?= htmlspecialchars($co_name) ?></p>
-<p>Amount: RM <?= htmlspecialchars($amount) ?></p>
-<p>Bank: <?= htmlspecialchars($bank) ?></p>
-<p>Status: <span class="<?= strtolower(str_replace(' ','-',$transaction_status)) ?>"><?= htmlspecialchars($transaction_status) ?></span></p>
-<form method="get" action="<?= htmlspecialchars($bounce) ?>">
-<input type="hidden" name="transaksi_kod" value="<?= htmlspecialchars($transaksiKod) ?>">
+<p>Name: <?= htmlspecialchars($d['co_name'] ?? '') ?></p>
+<p>Amount: RM <?= htmlspecialchars($d['amount']) ?></p>
+<p>Bank: <?= htmlspecialchars($d['bank']) ?></p>
+<p>Status: <span class="<?= strtolower(str_replace(' ','-',$d['transaction_status'])) ?>"><?= htmlspecialchars($d['transaction_status']) ?></span></p>
+
+<form method="get" action="<?= htmlspecialchars($d['bounce'] ?? '/') ?>">
+<input type="hidden" name="kod_transaksi" value="<?= htmlspecialchars($kodTransaksi) ?>">
 <button>Back to Main Page</button>
 </form>
 </div>

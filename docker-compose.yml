@@ -5,7 +5,24 @@ services:
     image: php:8.2-apache
     container_name: bayupay_dummy_gateway
     ports:
-      - "8123:80"   # <-- host port 8123 mapped to container port 80
+      - "8123:80"   # host port 8123 mapped to container port 80
     volumes:
       - ./bayupay_dummy_gateway:/var/www/html
     restart: unless-stopped
+
+  mysql:
+    image: mysql:8.0
+    container_name: bayupay_mysql
+    ports:
+      - "3333:3306"  # host port 3333 mapped to container port 3306
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword   # set your root password
+      MYSQL_DATABASE: bayupay_db          # optional: create default database
+      MYSQL_USER: bayupay_user            # optional: create user
+      MYSQL_PASSWORD: bayupay_pass        # password for the user
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
