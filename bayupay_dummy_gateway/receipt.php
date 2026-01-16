@@ -1,29 +1,28 @@
 <?php
 require 'db.php';
 
-// Get POST data
 $d = $_POST;
 
-// Simple validation
-if (!isset($d['rn'], $d['amount'], $d['bank'], $d['transaction_status'])) {
+// Basic validation
+if (!isset($d['rn'], $d['amount'], $d['bank'], $d['transaction_status'], $d['sid'], $d['itn'])) {
     echo "Invalid request.";
     exit;
 }
 
+// Generate kod_transaksi (50 chars)
 function generateKodTransaksi($data) {
     $str = ($data['rn'] ?? '') . '|' . ($data['amount'] ?? 0) . '|' . ($data['transaction_status'] ?? 'PENDING') . '|' . time();
     return substr(hash('sha256', $str), 0, 50);
 }
 
-
 $fpxRef = 'BPX' . date('YmdHis');
 $kodTransaksi = generateKodTransaksi($d);
 
-// Insert transaction into MySQL (created_at auto-filled)
+// Insert transaction
 $stmt = $db->prepare("
 INSERT INTO transactions 
-(seller_ref, fpx_ref, name, email, phone, amount, status, kod_transaksi, bank)
-VALUES (?,?,?,?,?,?,?,?,?)
+(seller_ref, fpx_ref, name, email, phone, amount, status, kod_transaksi, bank, sid, itn)
+VALUES (?,?,?,?,?,?,?,?,?,?,?)
 ");
 $stmt->execute([
     $d['rn'] ?? '',
@@ -34,7 +33,9 @@ $stmt->execute([
     $d['amount'] ?? 0,
     $d['transaction_status'] ?? 'PENDING',
     $kodTransaksi,
-    $d['bank'] ?? ''
+    $d['bank'] ?? '',
+    $d['sid'] ?? 'SIDTEST',
+    $d['itn'] ?? 'IMPORT123'
 ]);
 ?>
 <!DOCTYPE html>
@@ -42,10 +43,7 @@ $stmt->execute([
 <head>
 <title>Payment Receipt</title>
 <style>
-body{font-family:Arial;background:#f5f5f5}
-.box{width:450px;margin:60px auto;background:#fff;padding:20px;border-radius:8px}
-.success{color:green}.failed{color:red}.pending{color:orange}
-button{width:100%;padding:12px;margin-top:20px}
+body{font-family:Arial;background:#f5f5f5}.box{width:450px;margin:60px auto;background:#fff;padding:20px;border-radius:8px}.success{color:green}.failed{color:red}.pending{color:orange}button{width:100%;padding:12px;margin-top:20px}
 </style>
 </head>
 <body>

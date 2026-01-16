@@ -8,7 +8,7 @@ try {
     $db = new PDO("mysql:host=$host;port=3306;dbname=$dbname;charset=utf8mb4", $user, $pass);
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Create table if not exists
+    // Create table if not exists with sid and itn
     $db->exec("
     CREATE TABLE IF NOT EXISTS transactions (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -21,6 +21,8 @@ try {
         status VARCHAR(50),
         kod_transaksi VARCHAR(255),
         bank VARCHAR(50),
+        sid VARCHAR(50) DEFAULT 'SIDTEST',
+        itn VARCHAR(50) DEFAULT 'IMPORT123',
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
     ");

@@ -1,9 +1,8 @@
 <?php
-// pay_simulator.php
 $d = $_POST;
 
-// Simple check to make sure required fields exist
-if (!isset($d['rn'], $d['amount'])) {
+// Basic validation
+if (!isset($d['rn'], $d['amount'], $d['sid'], $d['itn'])) {
     echo "Invalid request.";
     exit;
 }
@@ -13,9 +12,7 @@ if (!isset($d['rn'], $d['amount'])) {
 <head>
 <title>FPX Payment Simulator</title>
 <style>
-body{font-family:Arial;background:#f5f5f5}
-.box{width:420px;margin:80px auto;background:#fff;padding:20px;border-radius:8px}
-select,button{width:100%;padding:10px;margin-top:10px}
+body{font-family:Arial;background:#f5f5f5}.box{width:420px;margin:80px auto;background:#fff;padding:20px;border-radius:8px}select,button{width:100%;padding:10px;margin-top:10px}
 </style>
 </head>
 <body>
@@ -25,25 +22,25 @@ select,button{width:100%;padding:10px;margin-top:10px}
 <p>Amount: RM <?= htmlspecialchars($d['amount']) ?></p>
 
 <form method="post" action="fpx_auth.php">
-<?php foreach ($d as $k => $v): ?>
+<?php foreach ($d as $k=>$v): ?>
     <input type="hidden" name="<?= htmlspecialchars($k) ?>" value="<?= htmlspecialchars($v) ?>">
 <?php endforeach; ?>
 
 <label>FPX Type</label>
 <select name="fpx_type" required>
-    <option value="">-- Select Type --</option>
-    <option value="PERSONAL">Personal</option>
-    <option value="BUSINESS">Business</option>
+<option value="">-- Select Type --</option>
+<option value="PERSONAL">Personal</option>
+<option value="BUSINESS">Business</option>
 </select>
 
 <label>Bank</label>
 <select name="bank" required>
-    <option value="">-- Select Bank --</option>
-    <option value="MAYBANK">Maybank</option>
-    <option value="CIMB">CIMB Bank</option>
-    <option value="RHB">RHB Bank</option>
-    <option value="PUBLIC">Public Bank</option>
-    <option value="HLB">Hong Leong Bank</option>
+<option value="">-- Select Bank --</option>
+<option value="MAYBANK">Maybank</option>
+<option value="CIMB">CIMB Bank</option>
+<option value="RHB">RHB Bank</option>
+<option value="PUBLIC">Public Bank</option>
+<option value="HLB">Hong Leong Bank</option>
 </select>
 
 <button type="submit">Proceed to Payment</button>

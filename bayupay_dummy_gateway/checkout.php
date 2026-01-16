@@ -1,43 +1,32 @@
 <?php
-// Allow any origin for testing purposes
+// Allow POST
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
 
-// Handle preflight request
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    exit(0);
-}
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') exit;
 
-// Get POST data
 $input = file_get_contents('php://input');
-$data = json_decode($input, true);
+$post = json_decode($input, true) ?? $_POST;
 
-// If JSON was sent, use it; otherwise fallback to $_POST
-$post = $data ?? $_POST;
-
-// Validate SID & ITN
-if (!isset($post['sid'], $post['itn']) || $post['sid'] !== 'SIDTEST' || $post['itn'] !== 'IMPORT123') {
-    echo 'Invalid SID or ITN';
+// Validate required fields
+if (!isset($post['rn'], $post['amount'], $post['sid'], $post['itn'])) {
+    echo "Missing required fields";
     exit;
 }
 
-// Instead of header redirect, use a POST form that auto-submits
+// Instead of header redirect, use auto-submit POST form to pay_simulator.php
 ?>
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Redirecting to FPX Simulator...</title>
-</head>
+<head><title>Redirecting to FPX Simulator...</title></head>
 <body>
 <form id="fpxForm" method="post" action="pay_simulator.php">
 <?php foreach ($post as $k => $v): ?>
     <input type="hidden" name="<?= htmlspecialchars($k) ?>" value="<?= htmlspecialchars($v) ?>">
 <?php endforeach; ?>
 </form>
-<script>
-    document.getElementById('fpxForm').submit();
-</script>
-<p>Redirecting to FPX simulator...</p>
+<script>document.getElementById('fpxForm').submit();</script>
+<p>Redirecting...</p>
 </body>
 </html>
