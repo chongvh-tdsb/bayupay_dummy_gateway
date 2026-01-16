@@ -29,7 +29,7 @@ if (!$sid || !$itn || !$rn) {
 // Query transaction
 $stmt = $db->prepare("
     SELECT seller_ref, fpx_ref AS fpx_seller_reference, name, email, phone, 
-           amount AS payment_amount, kod_transaksi AS transaction_data, 
+           amount AS payment_amount, kod_transaksi AS transaction_code, 
            status AS transaction_status, created_at 
     FROM transactions 
     WHERE seller_ref=? AND sid=? AND itn=?
