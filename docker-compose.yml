@@ -2,13 +2,14 @@ version: "3.9"
 
 services:
   bayupay-gateway:
-    build: ./bayupay_dummy_gateway
+    image: php:8.2-apache-bullseye
     container_name: bayupay_dummy_gateway
     ports:
       - "8123:80"
     volumes:
       - ./bayupay_dummy_gateway:/var/www/html
     restart: unless-stopped
+
 
 
   mysql:
